@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The PDRN Protocol™ — Your Downloads</title>
+<style>
+  :root { --bg:#fdf9f6; --panel:#fffdfb; --line:#eee2e0; --txt:#241d24; --dim:#6d6270; --accent:#d97f86; --accent2:#b48ae0; --good:#4f9d6a; --bad:#c95f6a; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--txt); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; }
+  .wrap { max-width:820px; margin:0 auto; padding:40px 20px 80px; }
+  .logo { font-size:22px; font-weight:800; margin-bottom:6px; }
+  .logo span { color:var(--accent); }
+  .sub { color:var(--dim); font-size:14px; margin-bottom:32px; }
+  .gate { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:28px; margin-bottom:28px; box-shadow:0 8px 26px rgba(120,80,100,.06); }
+  .gate h2 { font-size:18px; margin-bottom:8px; }
+  .gate p { color:var(--dim); font-size:13px; margin-bottom:18px; }
+  input { width:100%; background:var(--bg); border:1px solid var(--line); color:var(--txt); padding:13px 15px; border-radius:10px; font-size:15px; margin-bottom:12px; }
+  .btn { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border:none; padding:13px 20px; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; width:100%; box-shadow:0 8px 20px rgba(217,127,134,.25); }
+  .btn:hover { filter:brightness(1.05); }
+  .err { color:var(--bad); font-size:13px; margin-top:10px; min-height:18px; }
+  .locked { display:none; }
+  .files { display:grid; gap:12px; }
+  .file { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:14px; }
+  .file h3 { font-size:15px; margin-bottom:3px; }
+  .file p { color:var(--dim); font-size:12.5px; line-height:1.45; }
+  .file .btn { width:auto; padding:9px 16px; font-size:12.5px; flex-shrink:0; }
+  .badge { display:inline-block; background:rgba(79,157,106,0.12); color:var(--good); font-size:11px; padding:2px 10px; border-radius:12px; font-weight:700; margin-bottom:6px; }
+  footer { margin-top:40px; text-align:center; color:var(--dim); font-size:12px; }
+  .start { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:16px; }
+  .start h3 { font-size:16px; margin-bottom:8px; }
+  .start ol { padding-left:20px; color:var(--dim); font-size:13.5px; line-height:1.9; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">🧬 PDRN <span>Protocol</span>™</div>
+  <div class="sub">Barrier-First Skin Recovery — your member downloads</div>
+
+  <div id="gateBox" class="gate">
+    <h2>🔐 Unlock your downloads</h2>
+    <p>Enter the email you purchased with and your personal access code (sent in your order confirmation email).</p>
+    <input id="email" type="email" placeholder="you@email.com" autocomplete="email">
+    <input id="code" type="text" placeholder="PP-XXXXX-XXXXX" autocomplete="off">
+    <button class="btn" onclick="unlock()">Unlock →</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div id="memberArea" class="locked">
+    <div class="start">
+      <span class="badge">✅ Unlocked</span>
+      <h3>Start here — Repair → Calm → Activate</h3>
+      <ol>
+        <li><b>REPAIR:</b> read the Core System Guide, then run the Barrier Audit (score yourself 0–10)</li>
+        <li><b>CALM:</b> if you score under 8, start Phase 1 Reset tonight — no actives, no PDRN</li>
+        <li><b>ACTIVATE:</b> when you score 8+, begin the PDRN Sandwich at 2 nights this week</li>
+      </ol>
+    </div>
+    <div class="files">
+      <div class="file">
+        <div><h3>📘 1. The Core System Guide</h3><p>The four-phase protocol (Reset → Rebuild → Activate → Maintain) + the 30-day map + STOP rules. Start here.</p></div>
+        <button class="btn" onclick="dl('01-system-guide.pdf', this)">Download</button>
+      </div>
+      <div class="file">
+        <div><h3>🛠️ 2. The Barrier Repair Playbook</h3><p>The 21-day field manual for a compromised barrier — 12 self-inflicted causes, the 4 products you need, the re-entry ladder.</p></div>
+        <button class="btn" onclick="dl('02-barrier-repair-playbook.pdf', this)">Download</button>
+      </div>
+      <div class="file">
+        <div><h3>🏷️ 3. The PDRN Product Cheat-Sheet</h3><p>The 30-second test: does your bottle actually contain PDRN? Plus red flags, formats, and how much to pay.</p></div>
+        <button class="btn" onclick="dl('03-pdrn-cheatsheet.pdf', this)">Download</button>
+      </div>
+      <div class="file">
+        <div><h3>🥪 4. The PDRN Sandwich &amp; Stack Planner</h3><p>Exactly what goes on, in what order, AM and PM — plus the do-not-mix rules.</p></div>
+        <button class="btn" onclick="dl('04-sandwich-stack-planner.pdf', this)">Download</button>
+      </div>
+      <div class="file">
+        <div><h3>📊 5. The Product Tracker</h3><p>One new product at a time, five-day gaps, verdicts logged — stop guessing what broke your skin.</p></div>
+        <button class="btn" onclick="dl('05-product-tracker.pdf', this)">Download</button>
+      </div>
+      <div class="file">
+        <div><h3>🗓️ 6. The 30-Day Glow Calendar</h3><p>Printable day-by-day checklist — tick the box, log two scores, watch the trend.</p></div>
+        <button class="btn" onclick="dl('06-30-day-calendar.pdf', this)">Download</button>
+      </div>
+      <div class="file">
+        <div><h3>💉 7. The Treatment Stack Guide</h3><p>Microneedling, laser, clinic PDRN — the delivery principle, honest home-needling advice, and aftercare.</p></div>
+        <button class="btn" onclick="dl('07-treatment-stack-guide.pdf', this)">Download</button>
+      </div>
+      <div class="file">
+        <div><h3>🥗 8. The Skin Barrier Diet &amp; Lifestyle Guide</h3><p>The internal half nobody sells you — the six levers that build your barrier from the inside out.</p></div>
+        <button class="btn" onclick="dl('08-diet-lifestyle-guide.pdf', this)">Download</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>The PDRN Protocol™ · educational information only, not medical advice</footer>
+</div>
+
+<script>
+function unlock() {
+  const email = document.getElementById('email').value.trim();
+  const code = document.getElementById('code').value.trim();
+  const err = document.getElementById('err');
+  if (!email || !code) { err.textContent = 'Please enter both email and access code.'; return; }
+  fetch('/api/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, code }) })
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        sessionStorage.setItem('pp_email', email);
+        sessionStorage.setItem('pp_code', code);
+        document.getElementById('gateBox').style.display = 'none';
+        document.getElementById('memberArea').classList.remove('locked');
+        document.getElementById('memberArea').style.display = 'block';
+        err.textContent = '';
+      } else {
+        err.textContent = d.error || 'Access denied. Check your code and email.';
+      }
+    })
+    .catch(() => { err.textContent = 'Network error — try again.'; });
+}
+
+function dl(file, btn) {
+  const email = sessionStorage.getItem('pp_email');
+  const code = sessionStorage.getItem('pp_code');
+  if (!email || !code) { alert('Session expired — please unlock again.'); location.reload(); return; }
+  const orig = btn.textContent;
+  btn.textContent = '⏳ …';
+  btn.disabled = true;
+  fetch('/api/download', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, code, file }) })
+    .then(async r => {
+      if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || 'Download failed (' + r.status + ')'); }
+      const blob = await r.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = file;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      btn.textContent = '✅ Sent';
+    })
+    .catch(e => { alert(e.message); btn.textContent = orig; })
+    .finally(() => { btn.disabled = false; setTimeout(() => { if (btn.textContent === '✅ Sent') btn.textContent = orig; }, 2500); });
+}
+
+// auto-unlock if already verified this session
+const em = sessionStorage.getItem('pp_email');
+const ec = sessionStorage.getItem('pp_code');
+if (em && ec) {
+  fetch('/api/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: em, code: ec }) })
+    .then(r => r.json())
+    .then(d => { if (d.ok) { document.getElementById('gateBox').style.display = 'none'; document.getElementById('memberArea').classList.remove('locked'); document.getElementById('memberArea').style.display = 'block'; } });
+}
+document.getElementById('code').addEventListener('keydown', (e) => { if (e.key === 'Enter') unlock(); });
+</script>
+</body>
+</html>

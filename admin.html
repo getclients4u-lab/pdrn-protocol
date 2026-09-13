@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDRN Protocol Admin</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:#0d0d12; color:#f5f0e8; min-height:100vh; padding:40px 20px; }
+  .wrap { max-width:820px; margin:0 auto; }
+  h1 { font-size:24px; color:#fff; margin-bottom:4px; }
+  .sub { color:#b5ad9f; font-size:14px; margin-bottom:28px; }
+  .card { background:#17161d; border:1px solid #2a2833; border-radius:14px; padding:22px; margin-bottom:18px; }
+  .card h2 { color:#fff; font-size:16px; margin-bottom:14px; }
+  .stats { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:18px; }
+  .stat { flex:1; min-width:140px; background:#17161d; border:1px solid #2a2833; border-radius:12px; padding:16px; }
+  .stat .num { font-size:26px; font-weight:800; color:#e8c38f; }
+  .stat .lbl { font-size:12px; color:#b5ad9f; margin-top:4px; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+  input, select { background:#121116; border:1px solid #2a2833; border-radius:8px; color:#fff; font-size:14px; padding:11px 14px; flex:1; min-width:160px; }
+  .btn { background:linear-gradient(135deg,#e8c38f,#c99a5b); color:#17161d; font-weight:700; font-size:14px; padding:11px 20px; border-radius:8px; border:none; cursor:pointer; }
+  .btn.danger { background:linear-gradient(135deg,#f87171,#dc2626); color:#fff; }
+  .btn.ghost { background:transparent; border:1px solid #2a2833; color:#b5ad9f; }
+  .msg { font-size:13px; margin-top:10px; min-height:18px; }
+  .msg.ok { color:#4ade80; } .msg.err { color:#f87171; }
+  table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  th { text-align:left; color:#6b6457; font-weight:600; padding:8px 6px; border-bottom:1px solid #2a2833; }
+  td { padding:8px 6px; border-bottom:1px solid #1c1b22; vertical-align:top; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:700; }
+  .tag.active { background:#052e16; color:#4ade80; border:1px solid #166534; }
+  .tag.disabled { background:#2a0a0a; color:#f87171; border:1px solid #7f1d1d; }
+  .revoke { color:#f87171; cursor:pointer; font-size:12px; text-decoration:underline; background:none; border:none; }
+  .codebox { background:#121116; border:1px solid #2a2833; border-radius:8px; padding:12px 14px; font-family:monospace; font-size:14px; color:#4ade80; margin-top:8px; }
+  .tabs { display:flex; gap:8px; margin-bottom:18px; }
+  .tab { background:#17161d; border:1px solid #2a2833; color:#b5ad9f; padding:9px 18px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; }
+  .tab.on { background:#e8c38f; color:#17161d; border-color:#e8c38f; }
+  .hidden { display:none !important; }
+  .lock { display:flex; align-items:center; justify-content:center; min-height:60vh; }
+  .lock .card { width:100%; max-width:400px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lock" id="lock">
+    <div class="card">
+      <h2>🔐 Admin Login</h2>
+      <p class="sub" style="margin-bottom:18px">Enter the admin password to manage PDRN Protocol.</p>
+      <input type="password" id="pw" placeholder="Admin password" style="margin-bottom:12px; text-align:center">
+      <button class="btn" id="loginBtn" style="width:100%">Unlock</button>
+      <div class="msg err" id="lockMsg"></div>
+    </div>
+  </div>
+
+  <div id="dash" class="hidden">
+    <h1>✨ The PDRN Protocol™ — Admin</h1>
+    <p class="sub">Manage orders, grant access, and review the product.</p>
+
+    <div class="stats">
+      <div class="stat"><div class="num" id="statOrders">—</div><div class="lbl">Orders</div></div>
+      <div class="stat"><div class="num" id="statRevenue">—</div><div class="lbl">Revenue (test)</div></div>
+      <div class="stat"><div class="num" id="statUsers">—</div><div class="lbl">Active users</div></div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab on" data-tab="orders">🧾 Orders</div>
+      <div class="tab" data-tab="users">👥 Users</div>
+      <div class="tab" data-tab="add">➕ Add User</div>
+      <div class="tab" data-tab="product">📘 Product</div>
+    </div>
+
+    <div id="tab-orders" class="card">
+      <h2>Recent Orders</h2>
+      <table>
+        <thead><tr><th>Date</th><th>Email</th><th>Name</th><th>Amount</th><th>ID</th></tr></thead>
+        <tbody id="ordersBody"></tbody>
+      </table>
+      <div class="msg" id="ordersMsg"></div>
+    </div>
+
+    <div id="tab-users" class="card hidden">
+      <h2>Users &amp; Access</h2>
+      <table>
+        <thead><tr><th>Email</th><th>Name</th><th>Status</th><th>Source</th><th>Added</th><th></th></tr></thead>
+        <tbody id="usersBody"></tbody>
+      </table>
+      <div class="msg" id="usersMsg"></div>
+    </div>
+
+    <div id="tab-add" class="card hidden">
+      <h2>Grant Access (manual)</h2>
+      <div class="row">
+        <input type="email" id="newEmail" placeholder="buyer@email.com">
+        <input type="text" id="newName" placeholder="Name (optional)">
+        <button class="btn" id="addBtn">Generate Code</button>
+      </div>
+      <div class="msg" id="addMsg"></div>
+    </div>
+
+    <div id="tab-product" class="card hidden">
+      <h2>Product Review</h2>
+      <p class="sub" style="margin-bottom:14px">The 8 deliverables buyers receive (served only after code verification):</p>
+      <table>
+        <thead><tr><th>Deliverable</th><th>What it is</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>📘 Core System Guide</td><td>Four-phase protocol + 30-day map + STOP rules</td><td><a class="btn ghost" href="/download.html">View member area</a></td></tr>
+          <tr><td>🛠️ Barrier Repair Playbook</td><td>21-day fix for a compromised barrier</td><td></td></tr>
+          <tr><td>🏷️ PDRN Product Cheat-Sheet</td><td>30-second real-vs-fake INCI test</td><td></td></tr>
+          <tr><td>🥪 Sandwich &amp; Stack Planner</td><td>Exact order + do-not-mix rules</td><td></td></tr>
+          <tr><td>📊 Product Tracker</td><td>One-product trials with verdicts</td><td></td></tr>
+          <tr><td>🗓️ 30-Day Glow Calendar</td><td>Printable day-by-day checklist</td><td></td></tr>
+          <tr><td>💉 Treatment Stack Guide</td><td>Needling / laser / clinic PDRN done safely</td><td></td></tr>
+          <tr><td>🥗 Skin Barrier Diet &amp; Lifestyle Guide</td><td>The internal six levers</td><td></td></tr></tbody>
+      </table>
+      <p class="sub" style="margin-top:14px">Landing page: <a href="https://pdrn-protocol.vercel.app/" style="color:#e8c38f">pdrn-protocol.vercel.app</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const PW_KEY = 'pp_admin_pw';
+let pw = sessionStorage.getItem(PW_KEY) || '';
+
+function show(sel) { document.querySelectorAll('#lock,#dash').forEach(e => e.classList.add('hidden')); document.querySelector(sel).classList.remove('hidden'); }
+function msg(el, text, ok) { const m = document.getElementById(el); m.textContent = text; m.className = 'msg ' + (ok ? 'ok' : 'err'); }
+function fmtDate(iso) { return iso ? new Date(iso).toISOString().slice(0, 16).replace('T', ' ') : ''; }
+function money(cents) { return '$' + (cents / 100).toFixed(2); }
+
+async function api(body) {
+  const r = await fetch('/api/admin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw, ...body }) });
+  return { status: r.status, data: await r.json() };
+}
+
+async function loadOrders() {
+  const { status, data } = await api({ action: 'orders' });
+  if (status !== 200 || !data.ok) { msg('ordersMsg', data.error || 'Failed', false); return; }
+  document.getElementById('statOrders').textContent = data.count;
+  document.getElementById('statRevenue').textContent = money(data.totalCents);
+  const tb = document.getElementById('ordersBody');
+  tb.innerHTML = '';
+  if (!data.orders.length) { tb.innerHTML = '<tr><td colspan="5" style="color:#6b6457">No orders yet — test purchases will appear here.</td></tr>'; }
+  data.orders.slice().reverse().forEach(o => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${fmtDate(o.date)}</td><td>${o.email}</td><td>${o.name || '—'}</td><td>${money(o.amount)}</td><td style="font-size:11px;color:#6b6457">${o.id}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+async function loadUsers() {
+  const { status, data } = await api({ action: 'list' });
+  if (status !== 200 || !data.ok) { msg('usersMsg', data.error || 'Failed', false); return; }
+  const active = data.users.filter(u => u.status === 'active').length;
+  document.getElementById('statUsers').textContent = active;
+  const tb = document.getElementById('usersBody');
+  tb.innerHTML = '';
+  if (!data.users.length) { tb.innerHTML = '<tr><td colspan="6" style="color:#6b6457">No users yet.</td></tr>'; }
+  data.users.forEach(u => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${u.email}</td><td>${u.name || '—'}</td>
+      <td><span class="tag ${u.status}">${u.status}</span></td>
+      <td>${u.source || '—'}</td><td>${fmtDate(u.added)}</td>
+      <td>${u.status === 'active' ? '<button class="revoke" data-email="' + u.email + '">revoke</button>' : ''}</td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('.revoke').forEach(b => b.addEventListener('click', async () => {
+    const { status, data } = await api({ action: 'revoke', email: b.dataset.email });
+    msg('usersMsg', data.ok ? `Revoked ${b.dataset.email}` : data.error, data.ok);
+    loadUsers();
+  }));
+}
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  pw = document.getElementById('pw').value.trim();
+  const { status, data } = await api({ action: 'orders' });
+  if (status === 200 && data.ok) {
+    sessionStorage.setItem(PW_KEY, pw);
+    show('#dash');
+    loadOrders(); loadUsers();
+  } else {
+    msg('lockMsg', 'Wrong password', false);
+  }
+});
+
+document.getElementById('addBtn').addEventListener('click', async () => {
+  const email = document.getElementById('newEmail').value.trim();
+  const name = document.getElementById('newName').value.trim();
+  if (!email) { msg('addMsg', 'Email required', false); return; }
+  const { status, data } = await api({ action: 'add', email, name });
+  if (status === 200 && data.ok) {
+    if (data.code) {
+      document.getElementById('addMsg').innerHTML =
+        '<div class="codebox">🔑 ' + data.email + ' → access code: <b>' + data.code + '</b></div>' +
+        '<div style="font-size:12px;color:#6b6457;margin-top:6px">Shown once — copy it and send to the user.</div>';
+    } else {
+      msg('addMsg', data.email + ' already has active access', true);
+    }
+    document.getElementById('newEmail').value = '';
+    document.getElementById('newName').value = '';
+    loadUsers();
+  } else {
+    msg('addMsg', data.error || 'Failed', false);
+  }
+});
+
+// Tabs
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+  t.classList.add('on');
+  document.querySelectorAll('[id^="tab-"]').forEach(x => x.classList.add('hidden'));
+  document.getElementById('tab-' + t.dataset.tab).classList.remove('hidden');
+  if (t.dataset.tab === 'orders') loadOrders();
+  if (t.dataset.tab === 'users') loadUsers();
+}));
+
+document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginBtn').click(); });
+if (pw) { (async () => { const { status, data } = await api({ action: 'orders' }); if (status === 200 && data.ok) { show('#dash'); loadOrders(); loadUsers(); } })(); }
+</script>
+</body>
+</html>
